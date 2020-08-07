@@ -18,9 +18,7 @@
 1. build zeppelin docker image
 
     ```bash
-    docker pull ubuntu:14.04
-    cd docker
-    docker build -f Dockerfile -t zeppelin .
+    docker build -f Dockerfile -t zeppelin:0.8.2 .
     ```
 
 2. create `zeppelin` pod
