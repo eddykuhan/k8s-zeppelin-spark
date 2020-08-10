@@ -1,4 +1,4 @@
-## Deploying Zeppelin on kubnernetes
+## Deploying Zeppelin on kubnernetes( Upgraded Zeppelin to 0.8.2 & spark to 2.4.6 from previous fork)
 
 ### Files
 
