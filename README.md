@@ -1,4 +1,4 @@
-## Deploying Zeppelin on kubnernetes( Upgraded Zeppelin to 0.8.2 & spark to 2.4.6 from previous fork)
+## Deploying Zeppelin on kubnernetes( Upgraded Zeppelin to 0.9.0 & spark to 2.4.3 from previous fork)
 
 ### Files
 
@@ -18,7 +18,7 @@
 1. build zeppelin docker image
 
     ```bash
-    docker build -f Dockerfile -t zeppelin:0.8.2 .
+    docker build -f Dockerfile -t zeppelin:0.9.0 .
     ```
 
 2. create `zeppelin` pod
