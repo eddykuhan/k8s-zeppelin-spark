@@ -1,9 +1,9 @@
 
-# Pull base image  
+# Pull base image
 FROM ubuntu:16.04
-  
+
 MAINTAINER eddykuhan "eddykuhan92@gmail.com"
-  
+
 # update source
 RUN echo "deb http://archive.ubuntu.com/ubuntu/ trusty main restricted" > /etc/apt/sources.list && \
     echo "deb-src http://archive.ubuntu.com/ubuntu/ trusty main restricted " >> /etc/apt/sources.list && \
@@ -18,7 +18,7 @@ RUN echo "deb http://archive.ubuntu.com/ubuntu/ trusty main restricted" > /etc/a
     echo "deb http://archive.ubuntu.com/ubuntu/ trusty-security universe " >> /etc/apt/sources.list && \
     echo "deb-src http://archive.ubuntu.com/ubuntu/ trusty-security universe ">> /etc/apt/sources.list &&\
     apt-get update
-  
+
 # Install curl  nano wget
 RUN apt-get -y install curl nano wget
 #RUN curl https://bootstrap.pypa.io/get-pip.py >> get-pip.py &&\
@@ -44,15 +44,18 @@ ENV PATH ${JAVA_HOME}/bin:$PATH
 ###########################################################################################
 ###### Install Spark(2.4.4)
 ###########################################################################################
+#install spark
 ENV SPARK_HOME /opt/spark
 RUN cd /tmp && \
-   curl https://mirrors.tuna.tsinghua.edu.cn/apache/spark/spark-2.4.6/spark-2.4.6-bin-hadoop2.7.tgz | \
-         tar -zx
-#ADD spark-2.4.6-bin-hadoop2.7.tgz /tmp/
-RUN mv /tmp/spark-2.4.6-bin-hadoop2.7 ${SPARK_HOME}
-
+    wget --quiet https://archive.apache.org/dist/spark/spark-2.4.3/spark-2.4.3-bin-hadoop2.7.tgz && \
+     tar -zxf spark-2.4.3-bin-hadoop2.7.tgz && \
+        mv /tmp/spark-2.4.3-bin-hadoop2.7 ${SPARK_HOME}
 ENV PATH ${SPARK_HOME}/bin:$PATH
 
+
+RUN echo "$LOG_TAG Cleanup" && \
+    apt-get autoclean && \
+    apt-get clean
 
 
 ###########################################################################################
@@ -60,14 +63,19 @@ ENV PATH ${SPARK_HOME}/bin:$PATH
 ###########################################################################################
 ENV ZEPPELIN_HOME /opt/zeppelin
 RUN cd /tmp && \
-    curl https://mirrors.tuna.tsinghua.edu.cn/apache/zeppelin/zeppelin-0.8.2/zeppelin-0.8.2-bin-all.tgz | \
-         tar -zx
-#ADD zeppelin-0.8.2-bin-all.tgz /tmp/
-RUN mv /tmp/zeppelin-0.8.2-bin-all ${ZEPPELIN_HOME}
+curl -O https://mirrors.tuna.tsinghua.edu.cn/apache/zeppelin/zeppelin-0.9.0-preview1/zeppelin-0.9.0-preview1-bin-all.tgz &&  \
+tar -zxvf /tmp/zeppelin-0.9.0-preview1-bin-all.tgz && \
+ mv /tmp/zeppelin-0.9.0-preview1-bin-all ${ZEPPELIN_HOME} && \
+mkdir -p ${ZEPPELIN_HOME}/logs ${ZEPPELIN_HOME}/run ${ZEPPELIN_HOME}/webapps && \
+# Give access to some specific folders
+chmod -R 775 "${ZEPPELIN_HOME}/logs" "${ZEPPELIN_HOME}/run" "${ZEPPELIN_HOME}/notebook" "${ZEPPELIN_HOME}/conf" && \
+# Allow process to create new folders (e.g. webapps)
+chmod 775 ${ZEPPELIN_HOME}
+
 COPY zeppelin-site.xml ${ZEPPELIN_HOME}/conf/zeppelin-site.xml
 COPY zeppelin-env.sh ${ZEPPELIN_HOME}/conf/zeppelin-env.sh
 
-EXPOSE 8089
+EXPOSE 8080
 
 
 WORKDIR $ZEPPELIN_HOME
